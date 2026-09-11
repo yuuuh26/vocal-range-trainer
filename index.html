@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow"><meta name="theme-color" content="#f7f5fc">
+<meta name="description" content="声の動きを見ながら、自分のペースで発声練習。端末内で動く声域・ピッチトレーナー。">
+<link rel="manifest" href="./manifest.webmanifest"><link rel="icon" type="image/png" href="./icons/icon-192.png"><link rel="apple-touch-icon" href="./icons/icon-192.png">
+<link rel="stylesheet" href="./style.css"><title>声のアトリエ · Vocal Range Trainer</title>
+</head>
+<body>
+<div class="app">
+<header><a class="brand" href="./"><img src="./icons/icon-192.png" alt="" width="38" height="38"><span>声のアトリエ<small>VOCAL RANGE TRAINER</small></span></a><div class="header-actions"><button id="historyOpen" class="icon-button" aria-label="練習履歴">履歴</button><button id="settingsOpen" class="icon-button" aria-label="設定">⚙</button></div></header>
+<nav class="tabs" aria-label="モード"><button class="active" data-mode="live" aria-pressed="true">リアルタイム</button><button data-mode="range" aria-pressed="false">声域測定</button><button data-mode="practice" aria-pressed="false">発声練習</button></nav>
+<main>
+<div class="section-heading"><div><span class="eyebrow" id="modeEyebrow">LISTEN TO YOUR VOICE</span><h1 id="modeTitle">声の動きを、見てみよう。</h1></div><span class="privacy">● 端末内で解析</span></div>
+<section id="practicePanel" class="card" hidden>
+<div class="segmented"><button data-practice="scale" class="active" aria-pressed="true">5トーンスケール</button><button data-practice="tone" aria-pressed="false">単音練習</button></div>
+<div id="scaleFields"><div class="field-grid"><label>開始音<select id="startNote"></select></label><label>終了位置（開始音）<select id="endNote"></select></label></div><p id="scaleRange" class="hint"></p><div class="field-grid"><label>進む方向<select id="direction"><option value="1">半音ずつ上昇</option><option value="-1">半音ずつ下降</option></select></label><label>キーの進行<select id="advance"><option value="auto">自動で次へ</option><option value="manual">手動で次へ</option></select></label></div><details><summary>テンポ・音量・プリセット</summary><div class="field-grid"><label>テンポ（BPM）<input id="tempo" type="number" min="40" max="160" step="5" value="80"></label><label>音量 <output id="volumeText">35%</output><input id="volume" type="range" min="0" max="80" value="35"></label></div><button id="preset" class="secondary">男性用プリセットに戻す</button><p class="hint">C3からG3へ上昇。スケールの最高音はD4。無理のない範囲に変更してね。</p></details></div>
+<div id="toneFields" hidden><label>目標音<select id="targetNote"></select></label><button id="referenceTone" class="secondary">目標音を聴く</button></div>
+<div class="practice-status"><span id="phaseLabel">お手本 → 少し待つ → あなたの番</span><strong id="practiceTarget">1 · 2 · 3 · 4 · 5 · 4 · 3 · 2 · 1</strong><div id="scaleDots" aria-hidden="true"></div></div>
+<p class="hint" id="practiceHint">お手本の再生中は解析を休止。あなたの番だけ声を測るよ。</p>
+</section>
+<section class="card pitch-card" aria-label="現在の音程">
+<div class="card-top"><span id="inputStatus" class="status"><i></i> 開始するとマイクが有効になるよ</span><span id="elapsed">00:00</span></div>
+<div id="currentNote" class="current-note">—</div>
+<div class="pitch-sub"><span id="frequency">— Hz</span><span id="cents">— cent</span><span id="pitchDirection">声を出してみよう</span></div>
+<div class="meter" role="meter" aria-label="音程のずれ" aria-valuemin="-50" aria-valuemax="50" aria-valuenow="0"><span class="meter-center"></span><span id="meterNeedle" hidden></span></div><div class="meter-labels"><span>低い</span><span id="meterCaption">中央 = 最寄りの音</span><span>高い</span></div>
+<div class="primary-actions"><button id="start" class="primary">● 測定を始める</button><button id="pause" class="secondary" hidden>一時停止</button><button id="stop" class="danger" hidden>■ 終了</button></div><button id="nextKey" class="secondary wide" hidden>次のキーへ →</button>
+</section>
+<section class="card graph-card" aria-label="ピッチ履歴">
+<div class="graph-heading"><h2>ピッチの軌跡</h2><button id="follow" class="text-button" hidden>現在へ戻る ↗</button></div>
+<div class="graph-toolbar"><div class="segmented windows" aria-label="表示範囲"><button data-window="15" aria-pressed="false">15秒</button><button data-window="30" class="active" aria-pressed="true">30秒</button><button data-window="60" aria-pressed="false">60秒</button><button data-window="all" aria-pressed="false">全体</button></div><span id="graphState">直近30秒</span></div>
+<canvas id="pitchGraph" height="260" tabindex="0" aria-label="ピッチ履歴グラフ。左右スワイプまたは左右矢印キーで過去を確認"></canvas><p class="graph-help"><span>← 左右にスワイプして振り返る →</span><span id="retention">セッション全体を保持</span></p>
+</section>
+<section class="range-grid" aria-label="声域結果"><div class="mini-card"><span>安定最低音</span><strong id="stableLow">—</strong></div><div class="mini-card"><span>安定最高音</span><strong id="stableHigh">—</strong></div></section>
+<section id="rangeExtra" class="card" hidden><h2>今回の声域</h2><dl class="stats"><div><dt>瞬間最低音</dt><dd id="instantLow">—</dd></div><div><dt>瞬間最高音</dt><dd id="instantHigh">—</dd></div><div><dt>安定声域の広さ</dt><dd id="rangeWidth">—</dd></div><div><dt>測定時間</dt><dd id="rangeDuration">00:00</dd></div></dl></section>
+<details class="card details-card"><summary>音程安定度・測定の詳細</summary><p class="hint">直近1秒のロングトーンを確認。音階移動やビブラートでは揺れが大きく表示されるよ。</p><dl class="stats"><div><dt>平均音</dt><dd id="average">—</dd></div><div><dt>平均のずれ</dt><dd id="averageError">—</dd></div><div><dt>揺れ（標準偏差）</dt><dd id="wobble">—</dd></div><div><dt>安定度 / 100</dt><dd id="stability">—</dd></div><div><dt>セッションの安定部分の平均</dt><dd id="sessionScore">—</dd></div></dl><p class="hint">安定声域：同じ音名で350ms以上、信頼度90%以上、揺れ15cent以内・幅60cent以内。安定度 = max(0, 100 − 揺れ × 2)。歌の上手さ全体を採点するものではありません。</p></details>
+<section id="savePanel" class="card" hidden><h2>この練習を残す</h2><label>コメント（任意）<textarea id="comment" rows="2" placeholder="今日の声の調子、気づいたこと…"></textarea></label><button id="save" class="primary wide">練習結果を保存</button><p class="hint">保存したときだけ履歴に残ります。録音音声は保存しません。</p></section>
+<p class="footer-note">声に合わせて、少しずつ。<span>YUU</span></p>
+</main>
+</div>
+<dialog id="settingsDialog"><div class="dialog-heading"><h2>設定</h2><button class="icon-button" data-close="settingsDialog" aria-label="設定を閉じる">✕</button></div><label>音名の表示<select id="noteFormat"><option value="both">mid2G (G4)</option><option value="japanese">mid2G</option><option value="international">G4</option></select></label><label>小さな音の判定<select id="noiseFloor"><option value="0.004">小さな声も拾う</option><option value="0.008" selected>標準</option><option value="0.016">環境音を抑える</option></select></label><button id="persist" class="secondary wide">保存データの保護を申請</button><p id="storageInfo" class="hint"></p><details><summary>使い方・プライバシー</summary><p class="hint">静かな場所で、ひとりの声を測定してください。伴奏や複数の声は誤検出の原因になります。検出範囲は55〜1200Hz。基準はA4 = 440Hz。</p><p class="hint">マイク音声は端末内で解析し、外部へ送信しません。画面を離れると測定を終了します。初回読み込み後はオフラインでも使用できます。Android Chromeのメニューから「ホーム画面に追加」を選んでね。</p><p class="hint">履歴はこのブラウザ内に保存されます。ブラウザのデータ削除で消えるため、大切な履歴は履歴画面から書き出してください。</p></details></dialog>
+<dialog id="historyDialog"><div class="dialog-heading"><h2>練習履歴</h2><button class="icon-button" data-close="historyDialog" aria-label="履歴を閉じる">✕</button></div><div class="field-grid"><button id="export" class="secondary">Markdown出力</button><button id="backup" class="secondary">バックアップ</button></div><label class="import-label">バックアップを読み込む<input id="import" type="file" accept=".json,application/json"></label><div id="historyList"></div></dialog>
+<div id="toast" role="status" aria-live="polite" hidden></div>
+<script type="module" src="./app.js"></script>
+</body></html>
