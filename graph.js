@@ -27,7 +27,7 @@ export class PitchGraph {
     ctx.font='10px system-ui';ctx.textBaseline='middle';
     for(let n=low;n<=high;n++){
       ctx.strokeStyle=n%12===0?'#d7cce8':'#eee9f4';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(left,y(n));ctx.lineTo(right,y(n));ctx.stroke();
-      if((high-low<=14)||n%2===0&&high-low<=26||n%12===0){ctx.fillStyle='#8e829b';ctx.textAlign='right';ctx.fillText(noteName(n,this.format==='international'?'international':'japanese'),left-7,y(n));}
+      if((high-low<=14)||n%2===0&&high-low<=26||n%12===0){ctx.fillStyle='#8e829b';ctx.textAlign='right';ctx.fillText(noteName(n,this.format==='international'?'international':'japanese',false),left-7,y(n));}
     }
     for(let i=0;i<=4;i++){const t=start+span*i/4;ctx.strokeStyle='#f0ecf5';ctx.beginPath();ctx.moveTo(x(t),top);ctx.lineTo(x(t),bottom);ctx.stroke();ctx.textAlign=i===0?'left':i===4?'right':'center';ctx.fillStyle='#958a9f';ctx.fillText(`${Math.floor(t/60)}:${String(Math.floor(t%60)).padStart(2,'0')}`,x(t),h-10);}
     if(this.target!==null){ctx.setLineDash([5,4]);ctx.strokeStyle='#7ba78d';ctx.beginPath();ctx.moveTo(left,y(this.target));ctx.lineTo(right,y(this.target));ctx.stroke();ctx.setLineDash([]);}
