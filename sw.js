@@ -1,5 +1,5 @@
 const PREFIX='yuu-vocal-range-trainer-shell-';
-const CACHE=PREFIX+'v1';
+const CACHE=PREFIX+'v2';
 const FILES=['./','./index.html','./style.css','./app.js','./pitch.js','./pitch-worker.js','./graph.js','./audio.js','./storage.js','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/maskable-512.png'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(FILES))));
 // Do not force an update into an active/unsaved session. New version takes over after tabs close.
