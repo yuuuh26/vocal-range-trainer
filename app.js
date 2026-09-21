@@ -105,6 +105,17 @@ for(const el of document.querySelectorAll('[data-practice]'))el.onclick=()=>{sta
 $('start').onclick=start;$('stop').onclick=stop;$('pause').onclick=pause;$('nextKey').onclick=nextKey;$('save').onclick=store;$('follow').onclick=()=>{graph.follow=true;render();};
 $('settingsOpen').onclick=()=>{$('settingsDialog').showModal();storageInfo().catch(()=>toast('保存領域を利用できません。'));};$('historyOpen').onclick=()=>{$('historyDialog').showModal();histories().catch(()=>toast('履歴を読み込めませんでした。'));};
 for(const b of document.querySelectorAll('[data-close]'))b.onclick=()=>$(b.dataset.close).close();
+$('appUrl').onclick=()=>$('appUrl').select();
+$('appUrl').onfocus=()=>$('appUrl').select();
+$('copyAppUrl').onclick=async()=>{
+  const input=$('appUrl'),url=input.value;
+  try{await navigator.clipboard.writeText(url);toast('アプリURLをコピーしたよ。');}
+  catch{
+    input.focus();input.select();
+    try{if(document.execCommand('copy'))toast('アプリURLをコピーしたよ。');else throw new Error();}
+    catch{toast('URLを選択したよ。長押ししてコピーしてね。');}
+  }
+};
 $('noteFormat').onchange=async()=>{state.format=$('noteFormat').value;fillNotes();render();setCurrent(null,null);try{await saveSettings({format:state.format,floor:state.floor});}catch{toast('設定を保存できませんでした。');}};
 $('noiseFloor').onchange=async()=>{state.floor=+$('noiseFloor').value;try{await saveSettings({format:state.format,floor:state.floor});}catch{toast('設定を保存できませんでした。');}};
 $('persist').onclick=async()=>{if(!navigator.storage?.persist){toast('このブラウザは永続ストレージ申請に対応していません。');return;}try{const allowed=await navigator.storage.persist();toast(allowed?'保存データの保護が許可されたよ。':'今回は未許可でした。ホーム画面に追加して継続使用後、再申請できます。');await storageInfo();}catch{toast('申請できませんでした。');}};
