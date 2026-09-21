@@ -1,14 +1,17 @@
 // YIN cumulative mean normalized difference, with parabolic period refinement.
 export const hzToMidi = hz => 69 + 12 * Math.log2(hz / 440);
 export const midiToHz = midi => 440 * 2 ** ((midi - 69) / 12);
-export function noteName(midi, format = 'both') {
+export function noteName(midi, format = 'both', withSolfege = true) {
   if (!Number.isFinite(midi)) return '—';
   const n = Math.round(midi), octave = Math.floor(n / 12) - 1;
-  const name = ['C','C♯','D','D♯','E','F','F♯','G','G♯','A','A♯','B'][((n % 12) + 12) % 12];
+  const index = ((n % 12) + 12) % 12;
+  const name = ['C','C♯','D','D♯','E','F','F♯','G','G♯','A','A♯','B'][index];
+  const solfege = ['ド','ド♯','レ','レ♯','ミ','ファ','ファ♯','ソ','ソ♯','ラ','ラ♯','シ'][index];
   const international = name + octave;
   const prefix = ({0:'lowlowlow',1:'lowlow',2:'low',3:'mid1',4:'mid2',5:'hi',6:'hihi',7:'hihihi'})[octave];
   const japanese = prefix ? prefix + name : international;
-  return format === 'international' ? international : format === 'japanese' ? japanese : `${japanese} (${international})`;
+  const base = format === 'international' ? international : format === 'japanese' ? japanese : `${japanese} (${international})`;
+  return withSolfege ? `${base} · ${solfege}` : base;
 }
 export const SCALE = [0,2,4,5,7,5,4,2,0];
 export function detectPitch(input, sampleRate, floor = 0.008) {
